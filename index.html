@@ -628,7 +628,7 @@
                             <button class="tabs-btn" :class="gestTab==='cuotas' && 'is-active'" type="button" @click="setGestTab('cuotas')">Cuotas cobradas</button>
                             <button class="tabs-btn" :class="gestTab==='gastos' && 'is-active'" type="button" @click="setGestTab('gastos')">Gastos del gimnasio</button>
                         </div>
-                        <span class="plan-chip" style="flex:0 0 auto;white-space:nowrap" x-text="'$' + (gestTab==='cuotas' ? totalIngresos(mesFiltro) : totalGastos(mesFiltro)).toLocaleString('es-AR')"></span>
+                        <span class="plan-chip" style="flex:0 0 auto;white-space:nowrap" x-text="'$' + totalGrid().toLocaleString('es-AR')"></span>
                     </div>
 
                     <!-- filtros contextuales -->

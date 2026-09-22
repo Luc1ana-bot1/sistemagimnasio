@@ -824,6 +824,7 @@ document.addEventListener('alpine:init', () => {
       return this.gestTab === 'cuotas' ? this.ingresosFiltrados() : this.gastosFiltrados();
     },
     gridTotales() { return this.gridLista().length; },
+    totalGrid() { return this.gridLista().reduce((s, x) => s + (x.monto || 0), 0); },
     gridPaginasTotales() {
       return Math.max(1, Math.ceil(this.gridTotales() / this.gestPorPagina));
     },

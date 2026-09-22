@@ -326,6 +326,7 @@ document.addEventListener('alpine:init', () => {
     mobileOpen: false,
     toast: null,
     toastTimer: null,
+    scrolled: false,
 
     /* rutinas */
     rutinas: RUTINAS,
@@ -381,6 +382,11 @@ document.addEventListener('alpine:init', () => {
         this.rutinas = JSON.parse(JSON.stringify(RUTINAS));
       }
       this.cargado = true;
+      window.addEventListener('scroll', this.onScroll, { passive: true });
+      this.onScroll();
+    },
+    onScroll() {
+      this.scrolled = (window.scrollY || document.documentElement.scrollTop) > 300;
     },
 
     /* --------------- navegación --------------- */

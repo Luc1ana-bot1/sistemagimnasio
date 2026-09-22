@@ -347,6 +347,8 @@ document.addEventListener('alpine:init', () => {
     editando: null,
     form: null,
     pagoCliente: null,
+    pesoCliente: null,
+    formPeso: { fecha: '', peso: '' },
     detalle: null,
     eliminarPendiente: null,
 
@@ -366,6 +368,7 @@ document.addEventListener('alpine:init', () => {
       this.form = this.nuevoForm();
       this.formGasto = this.nuevoFormGasto();
       this.formRutina = this.nuevoFormRutina();
+      this.formPeso = this.nuevoFormPeso();
       const h = (location.hash || '').replace('#', '');
       if (h === 'clientes' || h === 'rutinas' || h === 'finanzas') {
         this.view = h;
@@ -766,6 +769,55 @@ document.addEventListener('alpine:init', () => {
       this.gestPagina = 1;
     },
     abrirDetalle(c) { this.detalle = c; },
+
+    /* --------------- peso del cliente --------------- */
+    nuevoFormPeso() {
+      return { fecha: hoyISO(), peso: '' };
+    },
+    abrirPeso(c) {
+      this.pesoCliente = c;
+      this.formPeso = this.nuevoFormPeso();
+    },
+    registrarPeso() {
+      const c = this.pesoCliente;
+      if (!c) return;
+      const peso = this.numMed(this.formPeso.peso);
+      if (peso === null || peso <= 0) {
+        this.mostrarToast('Ingresá un peso válido en kg.');
+        return;
+      }
+      c.medidas = c.medidas || [];
+      c.medidas.push({
+        fecha: this.formPeso.fecha || hoyISO(), peso,
+        espalda: null, cintura: null, abdomen: null, gluteo: null, pierna: null,
+      });
+      this.persistir();
+      this.mostrarToast(`Peso registrado: ${peso} kg`);
+      this.pesoCliente = null;
+    },
+    pesosCliente(c) {
+      if (!c || !c.medidas) return [];
+      return c.medidas
+        .filter((m) => m && this.numMed(m.peso) !== null)
+        .map((m) => ({ fecha: m.fecha, peso: this.numMed(m.peso) }));
+    },
+    pesosOrdenados(c) {
+      return this.pesosCliente(c).sort((a, b) => (a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : 0));
+    },
+    pesoInicial(c) {
+      const p = this.pesosOrdenados(c);
+      return p.length ? p[0] : null;
+    },
+    pesoActual(c) {
+      const p = this.pesosOrdenados(c);
+      return p.length ? p[p.length - 1] : null;
+    },
+    pesoCambio(c) {
+      const ini = this.pesoInicial(c);
+      const act = this.pesoActual(c);
+      if (!ini || !act) return null;
+      return Math.round((act.peso - ini.peso) * 10) / 10;
+    },
     quitarPago(cliente, pago) {
       if (!confirm(`¿Anular este pago de $${(pago.monto || 0).toLocaleString('es-AR')} del ${fmtFecha(pago.fecha)}?`)) return;
       const arr = cliente.pagos || [];

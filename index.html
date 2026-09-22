@@ -479,6 +479,7 @@
                                     <td>
                                         <div class="actions">
                                             <button class="btn-panel btn-ghost-green btn-ghost-sm" type="button" @click="abrirPago(c)">Cobrar</button>
+                                            <button class="btn-panel btn-ghost-sm" type="button" @click="abrirPeso(c)">Peso</button>
                                             <button class="btn-panel btn-ghost-sm" type="button" @click="abrirForm(c)">Editar</button>
                                             <button class="btn-panel btn-danger btn-ghost-sm" type="button" @click="pedirEliminar(c)">Eliminar</button>
                                         </div>
@@ -1220,6 +1221,44 @@
     </div>
 </div>
 
+<!-- registrar peso -->
+<div class="modal-backdrop" x-show="pesoCliente" x-cloak x-transition @click.self="pesoCliente=null" style="z-index:130">
+    <div class="modal" style="max-width:30rem" x-show="pesoCliente" x-transition>
+        <template x-if="pesoCliente">
+            <div>
+                <div class="modal-head">
+                    <div>
+                        <p class="plan-tag">Clientes</p>
+                        <h3 class="mt-1 text-2xl font-black">Registrar peso</h3>
+                    </div>
+                    <button class="modal-close" type="button" aria-label="Cerrar" @click="pesoCliente=null">✕</button>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="font-bold text-lg" x-text="pesoCliente.nombre + ' ' + pesoCliente.apellido"></p>
+                    <div class="panel-card p-5" x-show="pesosCliente(pesoCliente).length">
+                        <p class="stat-label">Último registro</p>
+                        <p class="mt-1 text-lg font-black text-emerald-300" x-text="pesoActual(pesoCliente) ? pesoActual(pesoCliente).peso + ' kg' : '—'"></p>
+                        <p class="text-xs text-dim" x-text="pesoActual(pesoCliente) ? fmtFecha(pesoActual(pesoCliente).fecha) : ''"></p>
+                    </div>
+                    <div class="form-grid">
+                        <label class="field">Fecha
+                            <input type="date" class="input" x-model="formPeso.fecha">
+                        </label>
+                        <label class="field">Peso (kg)
+                            <input type="number" min="0" step="0.1" class="input" x-model="formPeso.peso" placeholder="Ej.: 68.5">
+                        </label>
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="btn-primary w-full justify-center" type="button" @click="registrarPeso()">Guardar peso</button>
+                        <button class="btn-secondary justify-center" type="button" @click="pesoCliente=null">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
 <!-- detalle / historial -->
 <div class="modal-backdrop" x-show="detalle" x-cloak x-transition @click.self="detalle=null">
     <div class="modal modal-lg" x-show="detalle" x-transition>
@@ -1254,6 +1293,46 @@
                         <p class="text-xs text-dim" x-text="detalle.fechaInicio ? 'Alta: ' + fmtFecha(detalle.fechaInicio) : ''"></p>
                     </div>
                 </div>
+
+                <template x-if="pesosCliente(detalle).length > 0">
+                    <div class="panel-card mt-6 p-5">
+                        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                            <p class="text-sm font-bold uppercase tracking-widest text-zinc-500">Evolución de peso</p>
+                            <button class="btn-panel btn-ghost-green btn-ghost-sm" type="button" @click="abrirPeso(detalle)">+ Registrar peso</button>
+                        </div>
+                        <div class="grid gap-4 sm:grid-cols-3">
+                            <div>
+                                <p class="stat-label">Inicio</p>
+                                <p class="mt-1 text-lg font-black" x-text="pesoInicial(detalle).peso + ' kg'"></p>
+                                <p class="text-xs text-dim" x-text="fmtFecha(pesoInicial(detalle).fecha)"></p>
+                            </div>
+                            <div>
+                                <p class="stat-label">Actual</p>
+                                <p class="mt-1 text-lg font-black text-emerald-300" x-text="pesoActual(detalle).peso + ' kg'"></p>
+                                <p class="text-xs text-dim" x-text="fmtFecha(pesoActual(detalle).fecha)"></p>
+                            </div>
+                            <div>
+                                <p class="stat-label">Cambio</p>
+                                <p class="mt-1 text-lg font-black" :class="pesoCambio(detalle) > 0 ? 'text-red-400' : pesoCambio(detalle) < 0 ? 'text-emerald-300' : 'text-zinc-300'" x-text="(pesoCambio(detalle) > 0 ? '+' : '') + pesoCambio(detalle) + ' kg'"></p>
+                            </div>
+                        </div>
+                        <div class="table-wrap mt-4">
+                            <table class="admin-table" style="min-width:280px">
+                                <thead>
+                                    <tr><th>Fecha</th><th>Peso</th></tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="(p, i) in pesosOrdenados(detalle)" :key="'pw-' + i">
+                                        <tr>
+                                            <td class="text-dim" x-text="fmtFecha(p.fecha)"></td>
+                                            <td class="font-semibold" x-text="p.peso + ' kg'"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
 
                 <div class="mt-6" x-show="tieneFicha(detalle)">
                     <p class="mb-3 text-sm font-bold uppercase tracking-widest text-zinc-500">Ficha del cliente</p>

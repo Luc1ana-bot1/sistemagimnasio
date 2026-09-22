@@ -600,7 +600,7 @@
                     <div class="flex flex-wrap items-end justify-between gap-3">
                         <div>
                             <p class="eyebrow" style="margin:0">Evolución</p>
-                            <h3 class="mt-1 text-xl font-black">Últimos 6 meses</h3>
+                            <h3 class="panel-title text-xl font-black">Últimos 6 meses</h3>
                         </div>
                         <div class="legend">
                             <span><i style="background:#34d399"></i> Ingresos</span>
@@ -627,7 +627,7 @@
                     <!-- ingresos -->
                     <div class="panel-card p-6">
                         <div class="flex flex-wrap items-center justify-between gap-3">
-                            <h3 class="text-lg font-black" style="display:flex;align-items:center;gap:.6rem;min-width:0;flex:1 1 auto;margin:0"><span class="income-dot"></span> Cuotas cobradas</h3>
+                            <h3 class="panel-title text-lg font-black" style="display:flex;align-items:center;gap:.6rem;min-width:0;flex:1 1 auto"><span class="income-dot"></span> Cuotas cobradas</h3>
                             <span class="plan-chip" style="flex:0 0 auto;white-space:nowrap" x-text="'$' + totalIngresos(mesFiltro).toLocaleString('es-AR')"></span>
                         </div>
                         <div class="table-wrap mt-4" x-show="ingresosMes(mesFiltro).length > 0">
@@ -667,7 +667,7 @@
                     <!-- gastos -->
                     <div class="panel-card p-6">
                         <div class="flex flex-wrap items-center justify-between gap-3">
-                            <h3 class="text-lg font-black" style="min-width:0;flex:1 1 auto;margin:0">Gastos del gimnasio</h3>
+                            <h3 class="panel-title text-lg font-black" style="min-width:0;flex:1 1 auto">Gastos del gimnasio</h3>
                             <button class="btn-panel btn-ghost-green btn-ghost-sm" type="button" @click="abrirFormGasto()">+ Cargar gasto</button>
                         </div>
                         <div class="table-wrap mt-4" x-show="gastosMes(mesFiltro).length > 0">

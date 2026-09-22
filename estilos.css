@@ -20,6 +20,8 @@
   border:1px solid var(--line);
   border-radius:1.1rem;
 }
+/* Títulos de las tarjetas del panel: anulan los márgenes por defecto de h3 del tema */
+.panel-title{margin:0!important}
 
 .stat-card{
   position:relative;

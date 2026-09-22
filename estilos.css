@@ -168,7 +168,9 @@ select.input option{background:#18181b;color:#f4f4f5}
   border-radius:1rem;
   border:1px solid var(--line);
   background:#0d0d12;
+  max-width:100%;
 }
+.grid > .panel-card{min-width:0}
 table.admin-table{width:100%;border-collapse:collapse;min-width:820px;font-size:.875rem}
 .admin-table thead th{
   text-align:left;

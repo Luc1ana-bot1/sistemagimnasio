@@ -27,12 +27,7 @@
         <div class="hidden items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1.5 text-sm font-semibold text-zinc-300 lg:flex" role="navigation" aria-label="Principal">
             <a href="#" @click.prevent="irA('inicio')" class="nav-link" :class="view==='inicio' && 'active'">Inicio</a>
             <a href="#" @click.prevent="irA('rutinas')" class="nav-link" :class="view==='rutinas' && 'active'">Rutinas</a>
-            <a href="#" @click.prevent="irA('clientes')" class="nav-link" :class="view==='clientes' && 'active'">
-                <span class="relative inline-flex items-center gap-1.5">
-                    Clientes
-                    <span class="absolute -right-3 top-0 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,.9)]"></span>
-                </span>
-            </a>
+            <a href="#" @click.prevent="irA('clientes')" class="nav-link" :class="view==='clientes' && 'active'">Clientes</a>
             <a href="#" @click.prevent="irA('finanzas')" class="nav-link" :class="view==='finanzas' && 'active'">Finanzas</a>
             <a href="https://wa.me/5493644123456?text=Hola%20NOVA%20GYM%2C%20quiero%20empezar%20a%20entrenar." target="_blank" rel="noopener" class="nav-cta">Empezá hoy</a>
         </div>

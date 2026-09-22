@@ -434,14 +434,14 @@
                 <!-- toolbar -->
                 <div class="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div class="filter-tabs">
-                        <button class="filter-tab" :class="filtroEstado==='todos' && 'active'" @click="filtroEstado='todos'">Todos</button>
-                        <button class="filter-tab" :class="filtroEstado==='aldia' && 'active'" @click="filtroEstado='aldia'">Al día</button>
-                        <button class="filter-tab" :class="filtroEstado==='proxima' && 'active'" @click="filtroEstado='proxima'">Próximas</button>
-                        <button class="filter-tab" :class="filtroEstado==='vencida' && 'active'" @click="filtroEstado='vencida'">Vencidas</button>
+                        <button class="filter-tab" :class="filtroEstado==='todos' && 'active'" @click="filtroEstado='todos'; clientePagina = 1">Todos</button>
+                        <button class="filter-tab" :class="filtroEstado==='aldia' && 'active'" @click="filtroEstado='aldia'; clientePagina = 1">Al día</button>
+                        <button class="filter-tab" :class="filtroEstado==='proxima' && 'active'" @click="filtroEstado='proxima'; clientePagina = 1">Próximas</button>
+                        <button class="filter-tab" :class="filtroEstado==='vencida' && 'active'" @click="filtroEstado='vencida'; clientePagina = 1">Vencidas</button>
                     </div>
                     <div class="search-box w-full md:w-80">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                        <input type="search" class="input" placeholder="Buscar por nombre, teléfono o email…" x-model="buscar">
+                        <input type="search" class="input" placeholder="Buscar por nombre, teléfono o email…" x-model="buscar" @input="clientePagina = 1">
                     </div>
                 </div>
 
@@ -460,7 +460,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="c in clientesFiltrados()" :key="c.id">
+                            <template x-for="c in clientesVisibles()" :key="c.id">
                                 <tr>
                                     <td>
                                         <div class="flex items-center gap-3">
@@ -489,6 +489,15 @@
                     </table>
                 </div>
 
+                <div class="mt-4 flex flex-wrap items-center justify-between gap-3" x-show="clientesFiltrados().length > clientesPorPagina">
+                    <p class="text-sm text-zinc-400" x-text="'Mostrando ' + clientesVisibles().length + ' de ' + clientesFiltrados().length + ' clientes'"></p>
+                    <div class="flex items-center gap-2">
+                        <button class="btn-panel btn-ghost-sm" type="button" :disabled="clientePagina===1" @click="clientePagina = Math.max(1, clientePagina - 1)">← Anterior</button>
+                        <span class="px-1 text-sm font-semibold text-zinc-300" x-text="clientePagina + ' / ' + clientesPaginasTotales()"></span>
+                        <button class="btn-panel btn-ghost-sm" type="button" :disabled="clientePagina===clientesPaginasTotales()" @click="clientePagina = Math.min(clientesPaginasTotales(), clientePagina + 1)">Siguiente →</button>
+                    </div>
+                </div>
+
                 <!-- vacío -->
                 <div class="empty-state mt-6" x-show="clientesFiltrados().length===0">
                     <p class="text-4xl font-black" x-text="clientes.length ? 'Sin resultados' : 'Todavía no hay clientes'"></p>
@@ -501,7 +510,7 @@
                             <button class="btn-panel" type="button" @click="cargarDemo()">Cargar datos demo</button>
                         </template>
                         <template x-if="clientes.length > 0">
-                            <button class="btn-panel" type="button" @click="buscar=''; filtroEstado='todos'">Limpiar filtros</button>
+                            <button class="btn-panel" type="button" @click="buscar=''; filtroEstado='todos'; clientePagina = 1">Limpiar filtros</button>
                         </template>
                     </div>
                 </div>

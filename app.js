@@ -340,6 +340,8 @@ document.addEventListener('alpine:init', () => {
     cargado: false,
     buscar: '',
     filtroEstado: 'todos',
+    clientePagina: 1,
+    clientesPorPagina: 6,
     formAbierto: false,
     editando: null,
     form: null,
@@ -568,6 +570,16 @@ document.addEventListener('alpine:init', () => {
         return texto.includes(q);
       });
     },
+    clientesPaginasTotales() {
+      return Math.max(1, Math.ceil(this.clientesFiltrados().length / this.clientesPorPagina));
+    },
+    clientesVisibles() {
+      const lista = this.clientesFiltrados();
+      const totalPag = Math.max(1, Math.ceil(lista.length / this.clientesPorPagina));
+      if (this.clientePagina > totalPag) this.clientePagina = totalPag;
+      const inicio = (this.clientePagina - 1) * this.clientesPorPagina;
+      return lista.slice(inicio, inicio + this.clientesPorPagina);
+    },
 
     /* --------------- formulario cliente --------------- */
     nuevoForm() {
@@ -639,6 +651,7 @@ document.addEventListener('alpine:init', () => {
         };
         this.clientes.unshift(nuevo);
         this.persistir();
+        this.clientePagina = 1;
         this.mostrarToast('Cliente creado. Recordá registrar su primera cuota.');
       }
       this.formAbierto = false;
@@ -715,6 +728,7 @@ document.addEventListener('alpine:init', () => {
       if (!el) return;
       this.clientes = this.clientes.filter((c) => c.id !== el.id);
       this.persistir();
+      this.clientePagina = 1;
       this.mostrarToast('Cliente eliminado');
       this.eliminarPendiente = null;
       if (this.detalle && this.detalle.id === el.id) this.detalle = null;
@@ -871,6 +885,7 @@ document.addEventListener('alpine:init', () => {
     cargarDemo() {
       this.clientes = generarDemo();
       if (!this.gastos.length) this.gastos = generarDemoGastos();
+      this.clientePagina = 1;
       this.persistir();
       this.persistirGastos();
       this.mostrarToast('Datos de ejemplo cargados');
@@ -885,6 +900,7 @@ document.addEventListener('alpine:init', () => {
       if (!confirm('¿Vaciar todos los clientes y gastos? Esta acción no se puede deshacer.')) return;
       this.clientes = [];
       this.gastos = [];
+      this.clientePagina = 1;
       this.persistir();
       this.persistirGastos();
       this.mostrarToast('Base de datos vaciada');

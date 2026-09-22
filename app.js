@@ -353,6 +353,8 @@ document.addEventListener('alpine:init', () => {
     gastoFormAbierto: false,
     editandoGasto: null,
     formGasto: null,
+    gastoPagina: 1,
+    gastosPorPagina: 8,
 
     init() {
       this.form = this.nuevoForm();
@@ -786,6 +788,16 @@ document.addEventListener('alpine:init', () => {
         .filter((g) => clave === 'todos' || this.claveMes(g.fecha) === clave)
         .sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
     },
+    gastosPaginasTotales() {
+      return Math.max(1, Math.ceil(this.gastosMes(this.mesFiltro).length / this.gastosPorPagina));
+    },
+    gastosVisible() {
+      const lista = this.gastosMes(this.mesFiltro);
+      const totalPag = Math.max(1, Math.ceil(lista.length / this.gastosPorPagina));
+      if (this.gastoPagina > totalPag) this.gastoPagina = totalPag;
+      const inicio = (this.gastoPagina - 1) * this.gastosPorPagina;
+      return lista.slice(inicio, inicio + this.gastosPorPagina);
+    },
     totalIngresos(clave) { return this.ingresosMes(clave).reduce((s, p) => s + p.monto, 0); },
     totalGastos(clave) { return this.gastosMes(clave).reduce((s, g) => s + g.monto, 0); },
     balance(clave) { return this.totalIngresos(clave) - this.totalGastos(clave); },
@@ -839,6 +851,7 @@ document.addEventListener('alpine:init', () => {
       }
       this.persistirGastos();
       this.gastoFormAbierto = false;
+      this.gastoPagina = 1;
       this.mostrarToast('Gasto guardado');
     },
     eliminarGasto(g) {
@@ -864,6 +877,7 @@ document.addEventListener('alpine:init', () => {
     },
     cargarDemoGastos() {
       this.gastos = generarDemoGastos();
+      this.gastoPagina = 1;
       this.persistirGastos();
       this.mostrarToast('Gastos de ejemplo cargados');
     },
@@ -878,6 +892,7 @@ document.addEventListener('alpine:init', () => {
     vaciarGastos() {
       if (!confirm('¿Eliminar todos los gastos?')) return;
       this.gastos = [];
+      this.gastoPagina = 1;
       this.persistirGastos();
       this.mostrarToast('Gastos vaciados');
     },

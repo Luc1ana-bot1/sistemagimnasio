@@ -532,7 +532,7 @@
                 <div class="mt-8 flex flex-wrap items-center gap-3">
                     <label class="field" for="mes-filtro">Período</label>
                     <div class="relative">
-                        <select id="mes-filtro" class="input" style="width:15rem" x-model="mesFiltro">
+                        <select id="mes-filtro" class="input" style="width:15rem" x-model="mesFiltro" @change="gastoPagina = 1">
                             <option value="todos">Todos los meses</option>
                             <template x-for="m in mesesOpciones()" :key="'mes-' + m">
                                 <option :value="m" x-text="labelMes(m)"></option>
@@ -617,9 +617,9 @@
 
                     <!-- ingresos -->
                     <div class="panel-card p-6">
-                        <div class="flex items-center justify-between gap-3">
-                            <h3 class="text-lg font-black" style="display:flex;align-items:center;gap:.6rem"><span class="income-dot"></span> Cuotas cobradas</h3>
-                            <span class="plan-chip" x-text="'$' + totalIngresos(mesFiltro).toLocaleString('es-AR')"></span>
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <h3 class="text-lg font-black" style="display:flex;align-items:center;gap:.6rem;min-width:0;flex:1 1 auto;margin:0"><span class="income-dot"></span> Cuotas cobradas</h3>
+                            <span class="plan-chip" style="flex:0 0 auto;white-space:nowrap" x-text="'$' + totalIngresos(mesFiltro).toLocaleString('es-AR')"></span>
                         </div>
                         <div class="table-wrap mt-4" x-show="ingresosMes(mesFiltro).length > 0">
                             <table class="admin-table" style="min-width:420px">
@@ -657,8 +657,8 @@
 
                     <!-- gastos -->
                     <div class="panel-card p-6">
-                        <div class="flex items-center justify-between gap-3">
-                            <h3 class="text-lg font-black">Gastos del gimnasio</h3>
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <h3 class="text-lg font-black" style="min-width:0;flex:1 1 auto;margin:0">Gastos del gimnasio</h3>
                             <button class="btn-panel btn-ghost-green btn-ghost-sm" type="button" @click="abrirFormGasto()">+ Cargar gasto</button>
                         </div>
                         <div class="table-wrap mt-4" x-show="gastosMes(mesFiltro).length > 0">
@@ -673,7 +673,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template x-for="g in gastosMes(mesFiltro)" :key="'gasto-' + g.id">
+                                    <template x-for="g in gastosVisible()" :key="'gasto-' + g.id">
                                         <tr>
                                             <td class="text-dim" x-text="fmtFecha(g.fecha)"></td>
                                             <td><span class="cat-chip" :class="categoriaBadge(g.categoria)" x-text="categoriaLabel(g.categoria)"></span></td>
@@ -689,6 +689,14 @@
                                     </template>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="mt-4 flex flex-wrap items-center justify-between gap-3" x-show="gastosMes(mesFiltro).length > gastosPorPagina">
+                            <p class="text-sm text-zinc-400" x-text="'Mostrando ' + gastosVisible().length + ' de ' + gastosMes(mesFiltro).length + ' gastos'"></p>
+                            <div class="flex items-center gap-2">
+                                <button class="btn-panel btn-ghost-sm" type="button" :disabled="gastoPagina===1" @click="gastoPagina = Math.max(1, gastoPagina - 1)">← Anterior</button>
+                                <span class="px-1 text-sm font-semibold text-zinc-300" x-text="gastoPagina + ' / ' + gastosPaginasTotales()"></span>
+                                <button class="btn-panel btn-ghost-sm" type="button" :disabled="gastoPagina===gastosPaginasTotales()" @click="gastoPagina = Math.min(gastosPaginasTotales(), gastoPagina + 1)">Siguiente →</button>
+                            </div>
                         </div>
                         <div class="empty-state mt-4" x-show="gastosMes(mesFiltro).length === 0">
                             <p class="font-black">Sin gastos en este período</p>

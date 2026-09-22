@@ -541,7 +541,7 @@
                 <div class="mt-8 flex flex-wrap items-center gap-3">
                     <label class="field" for="mes-filtro">Período</label>
                     <div class="relative">
-                        <select id="mes-filtro" class="input" style="width:15rem" x-model="mesFiltro" @change="gastoPagina = 1">
+                        <select id="mes-filtro" class="input" style="width:15rem" x-model="mesFiltro" @change="gestPagina = 1">
                             <option value="todos">Todos los meses</option>
                             <template x-for="m in mesesOpciones()" :key="'mes-' + m">
                                 <option :value="m" x-text="labelMes(m)"></option>
@@ -621,18 +621,49 @@
                     </div>
                 </div>
 
-                <!-- detalle ingresos / gastos -->
-                <div class="mt-8 grid gap-6 lg:grid-cols-2">
-
-                    <!-- ingresos -->
-                    <div class="panel-card p-6">
-                        <div class="flex flex-wrap items-center justify-between gap-3">
-                            <h3 class="panel-title text-lg font-black" style="display:flex;align-items:center;gap:.6rem;min-width:0;flex:1 1 auto"><span class="income-dot"></span> Cuotas cobradas</h3>
-                            <span class="plan-chip" style="flex:0 0 auto;white-space:nowrap" x-text="'$' + totalIngresos(mesFiltro).toLocaleString('es-AR')"></span>
+                <!-- detalle cuotas / gastos en una sola grilla con pestañas -->
+                <div class="panel-card mt-8 p-6">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex flex-wrap items-center gap-2" role="tablist">
+                            <button class="tabs-btn" :class="gestTab==='cuotas' && 'is-active'" type="button" @click="setGestTab('cuotas')">Cuotas cobradas</button>
+                            <button class="tabs-btn" :class="gestTab==='gastos' && 'is-active'" type="button" @click="setGestTab('gastos')">Gastos del gimnasio</button>
                         </div>
-                        <div class="table-wrap mt-4" x-show="ingresosMes(mesFiltro).length > 0">
-                            <table class="admin-table" style="min-width:420px">
-                                <thead>
+                        <span class="plan-chip" style="flex:0 0 auto;white-space:nowrap" x-text="'$' + (gestTab==='cuotas' ? totalIngresos(mesFiltro) : totalGastos(mesFiltro)).toLocaleString('es-AR')"></span>
+                    </div>
+
+                    <!-- filtros contextuales -->
+                    <div class="mt-4 flex flex-wrap items-center gap-3">
+                        <template x-if="gestTab==='cuotas'">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <label class="field" for="plan-filtro" style="margin:0">Plan</label>
+                                <select id="plan-filtro" class="input" style="width:auto;min-width:10rem" x-model="cuotaPlanFiltro" @change="gestPagina = 1">
+                                    <option value="todos">Todos los planes</option>
+                                    <option value="mensual">Mensual</option>
+                                    <option value="semanal">Semanal</option>
+                                    <option value="diario">Diario</option>
+                                </select>
+                            </div>
+                        </template>
+                        <template x-if="gestTab==='gastos'">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <label class="field" for="cat-filtro" style="margin:0">Categoría</label>
+                                <select id="cat-filtro" class="input" style="width:auto;min-width:12rem" x-model="gastoCatFiltro" @change="gestPagina = 1">
+                                    <option value="todas">Todas las categorías</option>
+                                    <option value="alquiler">Alquiler</option>
+                                    <option value="servicios">Servicios (luz, agua, internet)</option>
+                                    <option value="maquinas">Máquinas y equipos</option>
+                                    <option value="insumos">Insumos</option>
+                                    <option value="otros">Otros</option>
+                                </select>
+                            </div>
+                        </template>
+                        <span class="text-sm text-dim" x-text="'Mostrando ' + gridVisibles().length + ' de ' + gridTotales() + ' ' + (gestTab==='cuotas' ? 'cuotas' : 'gastos')"></span>
+                    </div>
+
+                    <div class="table-wrap mt-4" x-show="gridTotales() > 0">
+                        <table class="admin-table" style="min-width:460px">
+                            <thead>
+                                <template x-if="gestTab==='cuotas'">
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Cliente</th>
@@ -640,9 +671,20 @@
                                         <th style="text-align:right">Monto</th>
                                         <th></th>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <template x-for="p in ingresosMes(mesFiltro)" :key="p.clave">
+                                </template>
+                                <template x-if="gestTab==='gastos'">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Categoría</th>
+                                        <th>Descripción</th>
+                                        <th style="text-align:right">Monto</th>
+                                        <th></th>
+                                    </tr>
+                                </template>
+                            </thead>
+                            <tbody>
+                                <template x-if="gestTab==='cuotas'">
+                                    <template x-for="p in gridVisibles()" :key="p.clave">
                                         <tr>
                                             <td class="text-dim" x-text="fmtFecha(p.fecha)"></td>
                                             <td class="font-semibold" x-text="p.cliente"></td>
@@ -655,34 +697,9 @@
                                             </td>
                                         </tr>
                                     </template>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="empty-state mt-4" x-show="ingresosMes(mesFiltro).length === 0">
-                            <p class="font-black">Sin ingresos en este período</p>
-                            <p class="mt-2 text-sm text-zinc-400">Cuando cobres una cuota desde el panel de <strong>Clientes</strong>, aparece acá automáticamente.</p>
-                        </div>
-                    </div>
-
-                    <!-- gastos -->
-                    <div class="panel-card p-6">
-                        <div class="flex flex-wrap items-center justify-between gap-3">
-                            <h3 class="panel-title text-lg font-black" style="min-width:0;flex:1 1 auto">Gastos del gimnasio</h3>
-                            <button class="btn-panel btn-ghost-green btn-ghost-sm" type="button" @click="abrirFormGasto()">+ Cargar gasto</button>
-                        </div>
-                        <div class="table-wrap mt-4" x-show="gastosMes(mesFiltro).length > 0">
-                            <table class="admin-table" style="min-width:440px">
-                                <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Categoría</th>
-                                        <th>Descripción</th>
-                                        <th style="text-align:right">Monto</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <template x-for="g in gastosVisible()" :key="'gasto-' + g.id">
+                                </template>
+                                <template x-if="gestTab==='gastos'">
+                                    <template x-for="g in gridVisibles()" :key="'gasto-' + g.id">
                                         <tr>
                                             <td class="text-dim" x-text="fmtFecha(g.fecha)"></td>
                                             <td><span class="cat-chip" :class="categoriaBadge(g.categoria)" x-text="categoriaLabel(g.categoria)"></span></td>
@@ -696,21 +713,21 @@
                                             </td>
                                         </tr>
                                     </template>
-                                </tbody>
-                            </table>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 flex flex-wrap items-center justify-between gap-3" x-show="gridTotales() > gestPorPagina">
+                        <p class="text-sm text-zinc-400" x-text="'Mostrando ' + gridVisibles().length + ' de ' + gridTotales() + ' ' + (gestTab==='cuotas' ? 'cuotas' : 'gastos')"></p>
+                        <div class="flex items-center gap-2">
+                            <button class="btn-panel btn-ghost-sm" type="button" :disabled="gestPagina===1" @click="gestPagina = Math.max(1, gestPagina - 1)">← Anterior</button>
+                            <span class="px-1 text-sm font-semibold text-zinc-300" x-text="gestPagina + ' / ' + gridPaginasTotales()"></span>
+                            <button class="btn-panel btn-ghost-sm" type="button" :disabled="gestPagina===gridPaginasTotales()" @click="gestPagina = Math.min(gridPaginasTotales(), gestPagina + 1)">Siguiente →</button>
                         </div>
-                        <div class="mt-4 flex flex-wrap items-center justify-between gap-3" x-show="gastosMes(mesFiltro).length > gastosPorPagina">
-                            <p class="text-sm text-zinc-400" x-text="'Mostrando ' + gastosVisible().length + ' de ' + gastosMes(mesFiltro).length + ' gastos'"></p>
-                            <div class="flex items-center gap-2">
-                                <button class="btn-panel btn-ghost-sm" type="button" :disabled="gastoPagina===1" @click="gastoPagina = Math.max(1, gastoPagina - 1)">← Anterior</button>
-                                <span class="px-1 text-sm font-semibold text-zinc-300" x-text="gastoPagina + ' / ' + gastosPaginasTotales()"></span>
-                                <button class="btn-panel btn-ghost-sm" type="button" :disabled="gastoPagina===gastosPaginasTotales()" @click="gastoPagina = Math.min(gastosPaginasTotales(), gastoPagina + 1)">Siguiente →</button>
-                            </div>
-                        </div>
-                        <div class="empty-state mt-4" x-show="gastosMes(mesFiltro).length === 0">
-                            <p class="font-black">Sin gastos en este período</p>
-                            <p class="mt-2 text-sm text-zinc-400">Registrá alquiler, luz, máquinas o insumos (agua potable) con el botón “+ Cargar gasto”.</p>
-                        </div>
+                    </div>
+                    <div class="empty-state mt-4" x-show="gridTotales() === 0">
+                        <p class="font-black" x-text="gestTab==='cuotas' ? 'Sin cuotas en este período' : 'Sin gastos en este período'"></p>
+                        <p class="mt-2 text-sm text-zinc-400" x-text="gestTab==='cuotas' ? 'Cuando cobres una cuota desde el panel de Clientes, aparece acá automáticamente.' : 'Registrá alquiler, luz, máquinas o insumos (agua potable) con el botón “+ Nuevo gasto”.'"></p>
                     </div>
                 </div>
             </div>

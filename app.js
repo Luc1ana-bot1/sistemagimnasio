@@ -353,11 +353,14 @@ document.addEventListener('alpine:init', () => {
     /* finanzas */
     gastos: [],
     mesFiltro: 'todos',
+    gestTab: 'cuotas',
+    gestPagina: 1,
+    gestPorPagina: 8,
+    cuotaPlanFiltro: 'todos',
+    gastoCatFiltro: 'todas',
     gastoFormAbierto: false,
     editandoGasto: null,
     formGasto: null,
-    gastoPagina: 1,
-    gastosPorPagina: 8,
 
     init() {
       this.form = this.nuevoForm();
@@ -760,6 +763,7 @@ document.addEventListener('alpine:init', () => {
       this.persistir();
       this.mostrarToast(`Cuota ${PLANES[c.plan].label.toLowerCase()} registrada: $${c.precio.toLocaleString('es-AR')}`);
       this.pagoCliente = null;
+      this.gestPagina = 1;
     },
     abrirDetalle(c) { this.detalle = c; },
     quitarPago(cliente, pago) {
@@ -808,15 +812,31 @@ document.addEventListener('alpine:init', () => {
         .filter((g) => clave === 'todos' || this.claveMes(g.fecha) === clave)
         .sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
     },
-    gastosPaginasTotales() {
-      return Math.max(1, Math.ceil(this.gastosMes(this.mesFiltro).length / this.gastosPorPagina));
+    ingresosFiltrados() {
+      return this.ingresosMes(this.mesFiltro)
+        .filter((p) => this.cuotaPlanFiltro === 'todos' || p.periodo === PLANES[this.cuotaPlanFiltro].label);
     },
-    gastosVisible() {
-      const lista = this.gastosMes(this.mesFiltro);
-      const totalPag = Math.max(1, Math.ceil(lista.length / this.gastosPorPagina));
-      if (this.gastoPagina > totalPag) this.gastoPagina = totalPag;
-      const inicio = (this.gastoPagina - 1) * this.gastosPorPagina;
-      return lista.slice(inicio, inicio + this.gastosPorPagina);
+    gastosFiltrados() {
+      return this.gastosMes(this.mesFiltro)
+        .filter((g) => this.gastoCatFiltro === 'todas' || g.categoria === this.gastoCatFiltro);
+    },
+    gridLista() {
+      return this.gestTab === 'cuotas' ? this.ingresosFiltrados() : this.gastosFiltrados();
+    },
+    gridTotales() { return this.gridLista().length; },
+    gridPaginasTotales() {
+      return Math.max(1, Math.ceil(this.gridTotales() / this.gestPorPagina));
+    },
+    gridVisibles() {
+      const lista = this.gridLista();
+      const totalPag = Math.max(1, Math.ceil(lista.length / this.gestPorPagina));
+      if (this.gestPagina > totalPag) this.gestPagina = totalPag;
+      const inicio = (this.gestPagina - 1) * this.gestPorPagina;
+      return lista.slice(inicio, inicio + this.gestPorPagina);
+    },
+    setGestTab(t) {
+      this.gestTab = t;
+      this.gestPagina = 1;
     },
     totalIngresos(clave) { return this.ingresosMes(clave).reduce((s, p) => s + p.monto, 0); },
     totalGastos(clave) { return this.gastosMes(clave).reduce((s, g) => s + g.monto, 0); },
@@ -871,7 +891,7 @@ document.addEventListener('alpine:init', () => {
       }
       this.persistirGastos();
       this.gastoFormAbierto = false;
-      this.gastoPagina = 1;
+      this.gestPagina = 1;
       this.mostrarToast('Gasto guardado');
     },
     eliminarGasto(g) {
@@ -898,7 +918,7 @@ document.addEventListener('alpine:init', () => {
     },
     cargarDemoGastos() {
       this.gastos = generarDemoGastos();
-      this.gastoPagina = 1;
+      this.gestPagina = 1;
       this.persistirGastos();
       this.mostrarToast('Gastos de ejemplo cargados');
     },
@@ -914,7 +934,7 @@ document.addEventListener('alpine:init', () => {
     vaciarGastos() {
       if (!confirm('¿Eliminar todos los gastos?')) return;
       this.gastos = [];
-      this.gastoPagina = 1;
+      this.gestPagina = 1;
       this.persistirGastos();
       this.mostrarToast('Gastos vaciados');
     },

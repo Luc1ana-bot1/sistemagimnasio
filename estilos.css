@@ -23,6 +23,25 @@
 /* Títulos de las tarjetas del panel: anulan los márgenes por defecto de h3 del tema */
 .panel-title{margin:0!important}
 
+/* Pestañas de la grilla de cuotas / gastos */
+.tabs-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.55rem 1.1rem;
+  border:1px solid var(--line);
+  border-radius:.65rem;
+  background:rgba(255,255,255,.04);
+  color:#a1a1aa;
+  font-size:.82rem;
+  font-weight:900;
+  letter-spacing:.03em;
+  cursor:pointer;
+  transition:all .18s ease;
+}
+.tabs-btn:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tabs-btn.is-active{color:#34d399;border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.1)}
+
 .stat-card{
   position:relative;
   overflow:hidden;

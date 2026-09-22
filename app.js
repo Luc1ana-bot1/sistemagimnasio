@@ -382,7 +382,7 @@ document.addEventListener('alpine:init', () => {
         this.rutinas = JSON.parse(JSON.stringify(RUTINAS));
       }
       this.cargado = true;
-      window.addEventListener('scroll', this.onScroll, { passive: true });
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
       this.onScroll();
     },
     onScroll() {

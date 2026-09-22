@@ -1344,7 +1344,7 @@
     <div class="modal" style="max-width:26rem" x-show="gastoFormAbierto" x-transition>
         <div class="flex items-center justify-between">
             <h3 class="text-xl font-black" x-text="editandoGasto ? 'Editar gasto' : 'Nuevo gasto'"></h3>
-            <button type="button" class="close-x" @click="gastoFormAbierto=false" aria-label="Cerrar">×</button>
+            <button type="button" class="modal-close" @click="gastoFormAbierto=false" aria-label="Cerrar">×</button>
         </div>
         <div class="mt-6 grid gap-4">
             <label class="field" for="gas-fecha">Fecha</label>

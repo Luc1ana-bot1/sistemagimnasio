@@ -630,3 +630,14 @@ footer{background:linear-gradient(180deg,#05070d 0%,#040506 45%,#000 100%)}
   .hero-copy .eyebrow{margin-bottom:0}
   .hero-title-mobile{margin-top:1rem!important}
 }
+
+/* Utilidades que existen en el markup pero faltan en el CSS compilado. */
+.p-6{padding:1.5rem}
+.items-end{align-items:flex-end}
+.mt-1{margin-top:.25rem}
+.mb-2{margin-bottom:.5rem}
+.px-1{padding-left:.25rem;padding-right:.25rem}
+.font-normal{font-weight:400}
+@media (min-width:1024px){
+  .lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

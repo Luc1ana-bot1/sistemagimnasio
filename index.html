@@ -160,7 +160,7 @@
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                     </button>
                     <div class="gallery-track" tabindex="0" aria-label="Galería Nova Gym">
-                        <template x-for="(img, i) in ['galeria-01','galeria-08','galeria-10','galeria-11','galeria-13','galeria-14','galeria-15','galeria-17','galeria-18','galeria-20','galeria-21','galeria-24','galeria-36','galeria-43']" :key="img">
+                        <template x-for="(img, i) in ['galeria-01','galeria-08','galeria-10','galeria-11','galeria-13','galeria-14','galeria-15','galeria-17']" :key="img">
                             <figure class="gallery-slide">
                                 <button class="gallery-lightbox-trigger" type="button" @click="lightbox = './Nova Gym _ Gimnasio premium_files/' + img + '.jpg'" :aria-label="'Ver ' + img">
                                     <img :src="'./Nova Gym _ Gimnasio premium_files/' + img + '.jpg'" :alt="'Nova Gym ' + (i+1)" loading="lazy">

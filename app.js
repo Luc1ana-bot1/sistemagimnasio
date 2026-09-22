@@ -796,9 +796,9 @@ document.addEventListener('alpine:init', () => {
     ingresosMes(clave) {
       const out = [];
       this.clientes.forEach((c) => {
-        (c.pagos || []).forEach((p) => {
+        (c.pagos || []).forEach((p, i) => {
           if (clave !== 'todos' && this.claveMes(p.fecha) !== clave) return;
-          out.push({ fecha: p.fecha, cliente: `${c.nombre} ${c.apellido}`, periodo: p.periodo, monto: p.monto || 0, ref: { c, p } });
+          out.push({ clave: `${c.id}_${p.fecha}_${i}`, fecha: p.fecha, cliente: `${c.nombre} ${c.apellido}`, periodo: p.periodo, monto: p.monto || 0, ref: { c, p } });
         });
       });
       return out.sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));

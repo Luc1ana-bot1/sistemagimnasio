@@ -622,3 +622,9 @@ footer{background:linear-gradient(180deg,#05070d 0%,#040506 45%,#000 100%)}
   .bar{width:.5rem}
   .bar-net{font-size:.52rem}
 }
+
+/* Separación entre el eyebrow y el título móvil del hero. */
+@media (max-width:640px){
+  .hero-copy .eyebrow{margin-bottom:1rem}
+  .hero-title-mobile{margin-top:1rem!important}
+}

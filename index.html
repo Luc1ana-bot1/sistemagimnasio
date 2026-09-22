@@ -906,7 +906,7 @@
                 </div>
             </section>
 
-            <section class="form-section">
+            <section class="form-section" x-show="editando">
                 <p class="form-section-title">Tutor / responsable <span class="text-dim font-normal">(menores de edad)</span></p>
                 <div class="form-grid">
                     <label class="field">Nombre del tutor
@@ -918,7 +918,7 @@
                 </div>
             </section>
 
-            <section class="form-section">
+            <section class="form-section" x-show="editando">
                 <p class="form-section-title">Servicio de emergencia</p>
                 <div class="form-grid">
                     <label class="field">¿Está afiliado a un servicio de emergencia?
@@ -934,7 +934,7 @@
                 </div>
             </section>
 
-            <section class="form-section">
+            <section class="form-section" x-show="editando">
                 <p class="form-section-title">Antecedentes familiares</p>
                 <p class="text-xs text-dim" style="margin-top:-.4rem">¿Posee algún familiar directo con...?</p>
                 <div class="check-grid">
@@ -944,7 +944,7 @@
                 </div>
             </section>
 
-            <section class="form-section">
+            <section class="form-section" x-show="editando">
                 <p class="form-section-title">Antecedentes personales</p>
                 <div class="form-grid">
                     <label class="field">¿Posee alergias?
@@ -979,7 +979,7 @@
                 </label>
             </section>
 
-            <section class="form-section">
+            <section class="form-section" x-show="editando">
                 <p class="form-section-title">En los últimos 2 meses tuvo</p>
                 <div class="check-grid">
                     <label class="check-pill"><input type="checkbox" x-model="form.lesionEsguinces"><span>Esguinces</span></label>
@@ -994,7 +994,7 @@
                 </label>
             </section>
 
-            <section class="form-section">
+            <section class="form-section" x-show="editando">
                 <p class="form-section-title">Cómo llegó y objetivo</p>
                 <div class="form-grid">
                     <label class="field">¿Cómo conoció el gimnasio?
@@ -1016,7 +1016,7 @@
                 </label>
             </section>
 
-            <section class="form-section">
+            <section class="form-section" x-show="editando">
                 <div class="flex items-center justify-between gap-3">
                     <p class="form-section-title" style="margin:0">Medidas corporales</p>
                     <button class="btn-panel btn-ghost-green btn-ghost-sm" type="button" @click="agregarMedida()">+ Agregar medición</button>
